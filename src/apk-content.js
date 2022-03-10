@@ -11,15 +11,13 @@ const calculateAPK = (price, alcoholPercentage, volume) => {
 	return volume * volumePercentage / price
 }
 
-
-
 const makeAPK = () => {
 	const parser = new DOMParser();
 
 	fetch(window.location.toString()).then(r => r.text()).then(content => {
 		const doc = parser.parseFromString(content, "text/html")
 
-		const detailPageContainer = doc.querySelector("#mainContent > div:nth-child(3)")
+		const detailPageContainer = doc.querySelector("[data-react-component=ProductDetailPageContainer]")
 
 		const productDetails = JSON.parse(detailPageContainer.dataset.props)
 
@@ -27,17 +25,29 @@ const makeAPK = () => {
 
 		const apk = calculateAPK(priceInclVat, alcoholPercentage, volume)
 
-		const percentageDisplayEval = document.evaluate("//div[text() = 'Alkoholhalt ']", document, null, XPathResult.ANY_TYPE, null)
-		const percentageDisplay = percentageDisplayEval.iterateNext()
+		const smallDetailDisplayEval = document.evaluate("/html/body/div[1]/div[2]/main/div[1]/div[1]/div/div[1]/div[3]/div[1]/div/div[1]/div[4]/div/p[2]", document, null, XPathResult.ANY_TYPE, null)
 
-		const apkDisplay = percentageDisplay.cloneNode(true)
-		apkDisplay.innerHTML = apkDisplay.innerHTML.replace("Alkoholhalt", "APK-Värde")
+		const smallDetailDisplayNode = smallDetailDisplayEval.iterateNext()
 
-		apkDisplay.innerHTML = apkDisplay.innerHTML.replace(`${alcoholPercentage.toString().replace('.', ',')} %`, apk.toFixed(3))
-		
-		percentageDisplay.parentElement.appendChild(apkDisplay)
+		// const dotDisplayEval = document.evaluate("/html/body/div[1]/div[2]/main/div[1]/div[1]/div/div[1]/div[3]/div[1]/div[2]/div[1]/div[3]/div[1]/p[2]", document, null, XPathResult.ANY_TYPE, null)
+		// const textDisplayEval = document.evaluate("/html/body/div[1]/div[2]/main/div[1]/div[1]/div/div[1]/div[3]/div[1]/div[2]/div[1]/div[3]/div[1]/p[3]", document, null, XPathResult.ANY_TYPE, null)
+
+		// const dotDisplayNode = dotDisplayEval.iterateNext()
+		// const textDisplayNode = textDisplayEval.iterateNext()
+
+		// const dotDisplayClone = dotDisplayNode.cloneNode(true)
+
+		// const apkDisplay = textDisplayNode.cloneNode(true)
+
+		const apkDisplay = smallDetailDisplayNode.cloneNode(true)
+
+		apkDisplay.innerHTML = `${apk.toFixed(3)} APK`
+
+		// textDisplayNode.parentElement.appendChild(dotDisplayClone)
+		smallDetailDisplayNode.parentElement.appendChild(apkDisplay)
 
 	})
+
 }
 
 makeAPK()

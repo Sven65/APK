@@ -1,7 +1,7 @@
 {
-	"manifest_version": 3,
+	"manifest_version": 2,
 	"name": "APK-Värde",
-	"version": "0.0.1",
+	"version": "0.0.3",
 
 	"description": "Beräkna APK-Värdet för Systembolaget.",
 	"content_scripts": [
